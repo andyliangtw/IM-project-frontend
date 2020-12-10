@@ -11,7 +11,7 @@ import {
 export default class Footer extends Component {
   render() {
     return (
-      <Navbar bg="light" expand="lg" fixed="bottom">
+      <Navbar bg="light" expand="lg">
         <Navbar.Brand href="/">React-Bootstrap</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

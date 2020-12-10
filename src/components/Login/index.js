@@ -4,28 +4,50 @@ import { Form, Button } from 'react-bootstrap';
 import userAPI from '../../api/userAPI';
 
 export default class Login extends Component {
-  userLogin(data) {
-    userAPI
-      .login(data)
-      .then(() => {})
-      .catch((e) => {
-        console.error(e);
-      });
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  async handleSubmit(e) {
+    const target = e.target;
+    const data = {
+      username: target.username.value,
+      password: target.password.value,
+    };
+    if (!data.username) {
+      alert('Please enter your username!');
+    } else if (!data.password) {
+      alert('Please enter your password!');
+    } else {
+      await userAPI
+        .login(data)
+        .then((authToken) => {
+          localStorage.setItem(authToken);
+          console.log('Login success', authToken);
+          console.log(localStorage.getItem('authToken'));
+          window.location.href = '/';
+        })
+        .catch((e) => {
+          alert('Login Failed!');
+          console.error(e);
+        });
+    }
   }
 
   render() {
+    if (true) {
+    }
+
     return (
-      <Form >
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" />
+      <Form onSubmit={this.handleSubmit}>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
+          <Form.Control type="text" placeholder="Username" />
         </Form.Group>
-        <Form.Group controlId="formBasicPassword">
+        <Form.Group controlId="password">
           <Form.Label>Password</Form.Label>
           <Form.Control type="password" placeholder="Password" />
-        </Form.Group>
-        <Form.Group controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="I have accepted the terms." />
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit

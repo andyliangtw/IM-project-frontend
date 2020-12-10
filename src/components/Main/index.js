@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Carousel, Card, CardColumns, Button } from 'react-bootstrap';
+
+import { formatPrice } from '../../utils';
+
 import slide1 from '../../img/slide1.svg';
 import slide2 from '../../img/slide2.svg';
 import slide3 from '../../img/slide3.svg';
@@ -46,11 +49,11 @@ export default class Main extends Component {
     const datas = [
       {
         name: 'Product1',
-        description: 'description',
+        price: 10,
       },
       {
         name: 'Product2',
-        description: 'description',
+        price: 20,
       },
     ];
 
@@ -59,9 +62,10 @@ export default class Main extends Component {
         <Card key={i}>
           <Card.Img variant="top" src={card} />
           <Card.Body>
-            <Card.Title>{data.name}</Card.Title>
-            <Card.Text>{data.description} </Card.Text>
-            <Button variant="primary">See product</Button>
+            <Card.Title>
+              <a href={'/product'}>{data.name}</a>
+            </Card.Title>
+            <Card.Text>${formatPrice(data.price)}</Card.Text>
           </Card.Body>
         </Card>
       );

@@ -13,7 +13,7 @@ export default class Register extends Component {
           <Form.Label>Password</Form.Label>
           <Form.Control type="password" placeholder="Password" />
         </Form.Group>
-        <Form.Group controlId="formBasicCheckbox">
+        <Form.Group controlId="haveAcceptedTerms">
           <Form.Check type="checkbox" label="I have accepted the terms." />
         </Form.Group>
         <Button variant="primary" type="submit">
