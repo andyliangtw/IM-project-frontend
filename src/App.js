@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import NavBar from './components/NavBar';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import ROUTES from './routes';
 import './App.scss';
@@ -13,7 +13,7 @@ export default function App() {
     <Router>
       <Switch>
         <Container>
-          <NavBar />
+          <Header />
           {ROUTES.map((route, i) => (
             <Route
               key={i}

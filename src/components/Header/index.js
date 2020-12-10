@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 
-export default class NavBar extends Component {
+export default class Header extends Component {
   render() {
     const isLogin = true;
     return (
