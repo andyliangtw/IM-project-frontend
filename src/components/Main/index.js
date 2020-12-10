@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Carousel, Card, CardColumns, Button } from 'react-bootstrap';
+import { Carousel, Card, CardColumns, Button, Image } from 'react-bootstrap';
 
 import { formatPrice } from '../../utils';
 
@@ -7,11 +7,13 @@ import slide1 from '../../img/slide1.svg';
 import slide2 from '../../img/slide2.svg';
 import slide3 from '../../img/slide3.svg';
 import card from '../../img/card.svg';
+import userImg from '../../img/user.svg';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.renderSlider = this.renderSlider.bind(this);
+    this.renderUsers = this.renderUsers.bind(this);
     this.renderProductCards = this.renderProductCards.bind(this);
   }
 
@@ -42,6 +44,15 @@ export default class Main extends Component {
           </Carousel.Caption>
         </Carousel.Item>
       </Carousel>
+    );
+  }
+
+  renderUsers() {
+    return (
+      <div>
+        <Image src={userImg} roundedCircle />
+        
+      </div>
     );
   }
 
@@ -78,6 +89,7 @@ export default class Main extends Component {
     return (
       <>
         {this.renderSlider()}
+        {this.renderUsers()}
         {this.renderProductCards()}
       </>
     );
