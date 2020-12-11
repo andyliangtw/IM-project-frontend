@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Header from './components/Header';
-import Footer from './components/Footer';
+// import Footer from './components/Footer';
 import ROUTES from './routes';
 import './App.scss';
 
@@ -24,7 +24,7 @@ export default function App() {
               )}
             />
           ))}
-          <Footer />
+          {/* <Footer /> */}
         </Container>
       </Switch>
     </Router>

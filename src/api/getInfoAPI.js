@@ -2,14 +2,27 @@ import api from './api';
 
 const getInfoAPI = {};
 
-getInfoAPI.allCollector = () => {
+getInfoAPI.allCollector = (data = {}) => {
   const url = `/allCollector`;
   return api.fire({
     url,
     headers: {
       'Content-Type': 'application/json',
     },
-    method: 'GET',
+    method: 'POST',
+    data: data,
+  });
+};
+
+getInfoAPI.allProduct = (data = {}) => {
+  const url = `/allProduct`;
+  return api.fire({
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    data: data,
   });
 };
 
@@ -20,7 +33,7 @@ getInfoAPI.itemInfo = (itemId) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    method: 'GET',
+    method: 'POST',
     data: itemId,
   });
 };
@@ -32,7 +45,7 @@ getInfoAPI.userInfo = (userId) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    method: 'GET',
+    method: 'POST',
     data: userId,
   });
 };

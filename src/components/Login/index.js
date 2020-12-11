@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
 import userAPI from '../../api/userAPI';
+import { isLogin } from '../../utils';
 
 export default class Login extends Component {
   constructor(props) {
@@ -10,44 +12,45 @@ export default class Login extends Component {
   }
 
   async handleSubmit(e) {
+    e.preventDefault();
     const target = e.target;
-    const data = {
+    const userData = {
       username: target.username.value,
       password: target.password.value,
     };
-    if (!data.username) {
-      alert('Please enter your username!');
-    } else if (!data.password) {
-      alert('Please enter your password!');
-    } else {
-      await userAPI
-        .login(data)
-        .then((authToken) => {
-          localStorage.setItem(authToken);
-          console.log('Login success', authToken);
-          console.log(localStorage.getItem('authToken'));
-          window.location.href = '/';
-        })
-        .catch((e) => {
-          alert('Login Failed!');
-          console.error(e);
-        });
-    }
+    await userAPI
+      .login(userData)
+      .then((res) => {
+        const rd = res.data;
+
+        localStorage.setItem('authToken', rd.api_key.$binary);
+        localStorage.setItem('session_id', rd.session_id);
+        localStorage.setItem('userId', rd.userId);
+        localStorage.setItem('authType', rd.api_key.$type);
+        localStorage.setItem('_id', rd._id.$oid);
+        localStorage.setItem('username', userData.username);
+
+        window.location.href = '/';
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   render() {
-    if (true) {
+    if (isLogin()) {
+      return <Redirect to="/" />;
     }
 
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
-          <Form.Control type="text" placeholder="Username" />
+          <Form.Control required type="text" placeholder="Username" />
         </Form.Group>
         <Form.Group controlId="password">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" />
+          <Form.Control required type="password" placeholder="Password" />
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit

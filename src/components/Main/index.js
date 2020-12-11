@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Carousel, Card, CardColumns, Button, Image } from 'react-bootstrap';
+import { Carousel, Card, CardColumns, Image } from 'react-bootstrap';
 
+import AddCartButton from '../AddCartButton';
 import { formatPrice } from '../../utils';
 
 import slide1 from '../../img/slide1.svg';
@@ -51,7 +52,6 @@ export default class Main extends Component {
     return (
       <div>
         <Image src={userImg} roundedCircle />
-        
       </div>
     );
   }
@@ -59,10 +59,12 @@ export default class Main extends Component {
   renderProductCards() {
     const datas = [
       {
+        item_id: '5fce2816c9a550fbdeee3761',
         name: 'Product1',
         price: 10,
       },
       {
+        item_id: '5fce2816c9a550fbdeee3761',
         name: 'Product2',
         price: 20,
       },
@@ -74,9 +76,10 @@ export default class Main extends Component {
           <Card.Img variant="top" src={card} />
           <Card.Body>
             <Card.Title>
-              <a href={'/product'}>{data.name}</a>
+              <a href={`/product?pid=${data.item_id}`}>{data.name}</a>
             </Card.Title>
-            <Card.Text>${formatPrice(data.price)}</Card.Text>
+            <Card.Text>{formatPrice(data.price)}</Card.Text>
+            <AddCartButton item_id={data.item_id} />
           </Card.Body>
         </Card>
       );
@@ -89,7 +92,9 @@ export default class Main extends Component {
     return (
       <>
         {this.renderSlider()}
+        <br />
         {this.renderUsers()}
+        <br />
         {this.renderProductCards()}
       </>
     );

@@ -13,7 +13,7 @@ api.fire = async (options, API_HOST = 'http://localhost:5000') => {
       ...options,
       headers: {
         ...options.headers,
-        Authorization: `${localStorage.getItem('authToken')}`,
+        Authorization: `Basic ${localStorage.getItem('authToken')}`,
       },
       url: `${API_HOST}${options.url}`,
     })

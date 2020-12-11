@@ -2,7 +2,7 @@ import api from './api';
 
 const userAPI = {};
 
-userAPI.register = (newUser) => {
+userAPI.register = (data) => {
   const url = `/register`;
   return api.fire({
     url,
@@ -10,7 +10,7 @@ userAPI.register = (newUser) => {
       'Content-Type': 'application/json',
     },
     method: 'POST',
-    data: newUser,
+    data: data,
   });
 };
 

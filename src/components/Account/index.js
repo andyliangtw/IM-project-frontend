@@ -1,58 +1,42 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
 
-import userAPI from '../../api/userAPI';
-import { isLogin } from '../../utils';
+import getInfoAPI from '../../api/getInfoAPI';
 
-export default class Register extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
+export default class Account extends Component {
+  componentDidMount() {
+    this.getUserInfo();
   }
 
-  async handleSubmit(e) {
-    const form = e.target;
-    const data = {
-      email: form.email.value,
-      username: form.username.value,
-      password: form.password.value,
-    };
-    await userAPI
-      .register(data)
+  async getUserInfo() {
+    const userId = localStorage.getItem('userId');
+    await getInfoAPI
+      .userInfo({ userId })
       .then((res) => {
-        const rd = res.data;
-        console.log(rd);
-        window.location.href = '/login';
+        console.log(res.data);
       })
       .catch((err) => {
-        alert('Register Failed!');
         console.error(err);
       });
   }
 
   render() {
-    if (isLogin()) {
-      return <Redirect to="/" />;
-    }
-
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Group controlId="email">
           <Form.Label>Email address</Form.Label>
           <Form.Control required type="email" placeholder="Email" />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
           <Form.Control required type="text" placeholder="Username" />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="password">
           <Form.Label>Password</Form.Label>
           <Form.Control required type="password" placeholder="Password" />
-          <Form.Text muted>
-            Your password must be 8-20 characters long, contain letters and
-            numbers, and must not contain spaces, special characters, or emoji.
-          </Form.Text>
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="haveAcceptedTerms">
           <Form.Check

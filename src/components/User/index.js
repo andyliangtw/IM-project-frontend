@@ -1,20 +1,26 @@
 import React, { Component } from 'react';
 
+import getInfoAPI from '../../api/getInfoAPI';
+
 export default class User extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  componentDidMount() {
+    this.getUserInfo();
+  }
 
-  componentDidMount() {}
-
-  componentDidUpdate() {}
-
-  componentWillUnmount() {}
+  async getUserInfo() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('uid');
+    await getInfoAPI
+      .userInfo({ userId })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 
   render() {
-    if (this.props.isLogin) {
-
-    }
     return <div></div>;
   }
 }
