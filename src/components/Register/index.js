@@ -24,8 +24,8 @@ export default class Register extends Component {
       await userAPI.register(data);
       window.location.href = '/login';
     } catch (err) {
-      alert('Register Failed!');
       console.error(err);
+      alert(err.response.data.response);
     }
   }
 

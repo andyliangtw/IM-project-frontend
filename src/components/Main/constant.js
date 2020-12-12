@@ -1,2 +1,2 @@
 export const SELLER_DISPLAY_AMOUNT = 5;
-export const PRODUCT_DISPLAY_AMOUNT = 4;
+export const PRODUCT_DISPLAY_AMOUNT = 6;

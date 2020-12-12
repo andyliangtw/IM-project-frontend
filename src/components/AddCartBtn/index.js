@@ -3,10 +3,9 @@ import { Button } from 'react-bootstrap';
 
 import operationAPI from '../../api/operationAPI';
 
-export default class AddCartButton extends Component {
+export default class AddCartBtn extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -17,8 +16,9 @@ export default class AddCartButton extends Component {
   }
 
   async addToCart() {
-    const item_id = this.props.item_id;
-    const params = { item_id, amount: this.props.amount || 1 };
+    const { item_id, amount = 1 } = this.props;
+
+    const params = { item_id, amount };
     await operationAPI.addCart(params);
   }
 

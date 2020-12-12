@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Carousel, Card, CardColumns, Image } from 'react-bootstrap';
+import { Carousel, CardDeck, Card, Image } from 'react-bootstrap';
 
-import AddCartButton from '../AddCartButton';
+import AddCartBtn from '../AddCartBtn';
 import getInfoAPI from '../../api/getInfoAPI';
 import { formatPrice } from '../../utils';
 
@@ -9,8 +9,8 @@ import { SELLER_DISPLAY_AMOUNT, PRODUCT_DISPLAY_AMOUNT } from './constant';
 import slide1 from '../../img/slide1.svg';
 import slide2 from '../../img/slide2.svg';
 import slide3 from '../../img/slide3.svg';
-import card from '../../img/card.svg';
-import userImg from '../../img/user.svg';
+import productImg from '../../img/card.svg';
+import userImg from '../../img/profile-user.svg';
 
 export default class Main extends Component {
   constructor(props) {
@@ -20,6 +20,7 @@ export default class Main extends Component {
       sellers: [],
       productIds: [],
       products: [],
+      amounts: [],
     };
   }
 
@@ -46,8 +47,10 @@ export default class Main extends Component {
 
   async getProductsInfo() {
     const res = await getInfoAPI.allProduct({ length: PRODUCT_DISPLAY_AMOUNT });
-    const productIds = res.data.products;
-    this.setState({ productIds });
+    const rd = res.data.products;
+    const productIds = rd.map((product) => product.itemId);
+    const amounts = rd.map((product) => product.amount);
+    this.setState({ productIds, amounts });
 
     const products = await Promise.all(
       productIds.map(async (productId) => {
@@ -91,10 +94,20 @@ export default class Main extends Component {
 
   renderSellers() {
     const sellers = this.state.sellers.map((seller, i) => {
+      const url = `/user?uid=${this.state.sellerIds[i]}`;
       return (
-        <h3 key={i}>
-          <a href={`/user?uid=${this.state.sellerIds[i]}`}>{seller.username}</a>
-        </h3>
+        <div
+          key={i}
+          className="d-inline-flex flex-column align-items-center m-3">
+          <Image
+            src={userImg}
+            style={{ width: '100px', height: '100px' }}
+            roundedCircle
+          />
+          <h3>
+            <a href={url}>{seller.username}</a>
+          </h3>
+        </div>
       );
     });
 
@@ -102,24 +115,26 @@ export default class Main extends Component {
   }
 
   renderProductCards() {
-    const cards = this.state.products.map((product, i) => {
+    const { products, productIds } = this.state;
+    const cards = products.map((product, i) => {
       return (
-        <Card key={i}>
-          <Card.Img variant="top" src={card} />
+        <Card key={i} style={{ minWidth: '18rem', maxWidth: '18rem' }}>
+          <Card.Img
+            variant="top"
+            src={product.image_urls ? product.image_urls[0] : productImg}
+          />
           <Card.Body>
             <Card.Title>
-              <a href={`/product?pid=${this.state.productIds[i]}`}>
-                {product.name}
-              </a>
+              <a href={`/product?pid=${productIds[i]}`}>{product.name}</a>
             </Card.Title>
             <Card.Text>{formatPrice(product.price)}</Card.Text>
-            <AddCartButton item_id={product.item_id} />
+            <AddCartBtn item_id={productIds[i]} />
           </Card.Body>
         </Card>
       );
     });
 
-    return <CardColumns>{cards}</CardColumns>;
+    return <CardDeck>{cards}</CardDeck>;
   }
 
   render() {

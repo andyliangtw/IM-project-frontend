@@ -6,6 +6,7 @@ import Account from './components/Account';
 import Product from './components/Product';
 import User from './components/User';
 import Cart from './components/Cart';
+import Sells from './components/Sells';
 
 const ROUTES = [
   {
@@ -40,6 +41,10 @@ const ROUTES = [
   {
     path: '/cart',
     component: Cart,
+  },
+  {
+    path: '/sells',
+    component: Sells,
   },
 ];
 

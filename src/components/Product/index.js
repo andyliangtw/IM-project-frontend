@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { Breadcrumb, Image, Carousel, Row, Col } from 'react-bootstrap';
 
-import AddCartButton from '../AddCartButton';
+import AddCartBtn from '../AddCartBtn';
 import getInfoAPI from '../../api/getInfoAPI';
 import { formatPrice } from '../../utils';
-
-import aaa from '../../img/slide1.svg';
 
 export default class Product extends Component {
   constructor(props) {
@@ -14,18 +12,20 @@ export default class Product extends Component {
       itemId: null,
       product: null,
       owner: null,
+      buyAmount: 1,
     };
+    this.handleBuyAmountChange = this.handleBuyAmountChange.bind(this);
   }
 
   componentDidMount() {
-    this.getProductInfo();
-  }
-
-  async getProductInfo() {
     const urlParams = new URLSearchParams(window.location.search);
     const itemId = urlParams.get('pid');
     this.setState({ itemId });
 
+    this.getProductInfo(itemId);
+  }
+
+  async getProductInfo(itemId) {
     let res = await getInfoAPI.itemInfo({ itemId });
     this.setState({ product: res.data });
 
@@ -34,44 +34,47 @@ export default class Product extends Component {
     this.setState({ owner: res.data });
   }
 
-  render() {
-    const options = [];
-    for (let i = 0; i < 5; i++) {
-      options.push(<option>{i + 1}</option>);
-    }
+  handleBuyAmountChange(e) {
+    this.setState({ buyAmount: Number(e.target.value) });
+  }
 
+  render() {
+    const { product, owner, itemId, buyAmount } = this.state;
     return (
       <>
         <Breadcrumb>
           <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-          <Breadcrumb.Item active>{this.state.product?.name}</Breadcrumb.Item>
+          <Breadcrumb.Item active>{product?.name}</Breadcrumb.Item>
         </Breadcrumb>
         <Row>
           <Col>
             <Carousel>
-              <Carousel.Item>
-                {this.props.product?.image_urls.map((image_url, i) => (
-                  <Image key={i} src={image_url} fluid />
-                ))}
-                <Image src={aaa} fluid />
-              </Carousel.Item>
+              {product?.image_urls.map((image_url, i) => (
+                <Carousel.Item key={i}>
+                  <Image src={image_url} thumbnail />
+                </Carousel.Item>
+              ))}
             </Carousel>
           </Col>
           <Col>
-            <h3>{this.state.product?.name}</h3>
-            <p>{this.state.product?.description}</p>
+            <h3>{product?.name}</h3>
+            <p>{product?.description}</p>
             <p>
-              <a href={`/user?uid=${this.state.owner?._id.$oid}`}>
-                {this.state.owner?.username}
-              </a>
+              <a href={`/user?uid=${owner?._id.$oid}`}>{owner?.username}</a>
             </p>
-            <p className="text-danger">
-              {formatPrice(this.state.product?.price)}
-            </p>
+            <p className="text-danger">{formatPrice(product?.price)}</p>
             <p>
-              Amount: <select>{options}</select>{' '}
+              Amount:{' '}
+              <input
+                type="number"
+                step="1"
+                min="1"
+                value={buyAmount}
+                onChange={this.handleBuyAmountChange}
+                required
+              />
             </p>
-            <AddCartButton item_id={this.state.itemId} />
+            <AddCartBtn item_id={itemId} amount={buyAmount} />
           </Col>
         </Row>
       </>
