@@ -5,38 +5,21 @@ import userAPI from '../../api/userAPI';
 import { isLogin } from '../../utils';
 
 export default class Logout extends Component {
-  constructor(props) {
-    super(props);
-    this.userLogout = this.userLogout.bind(this);
-    this.state = {
-      haveLogout: false,
-    };
-  }
-
   componentDidMount() {
-    this.userLogout().then(() => {
-      this.setState({ haveLogout: true });
-    });
+    this.userLogout();
   }
 
   async userLogout() {
-    return await userAPI
-      .logout()
-      .then((res) => {
-        console.log('logout success:\n', res.data.response);
+    await userAPI.logout();
 
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('session_id');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('authType');
-        localStorage.removeItem('_id');
-        localStorage.removeItem('username');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('session_id');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('authType');
+    localStorage.removeItem('_id');
+    localStorage.removeItem('username');
 
-        window.location.href = '/';
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    window.location.href = '/';
   }
 
   render() {
@@ -44,6 +27,6 @@ export default class Logout extends Component {
       return <Redirect to="/" />;
     }
 
-    return this.state.haveLogout ? <Redirect to={`/`} /> : <div />;
+    return null;
   }
 }

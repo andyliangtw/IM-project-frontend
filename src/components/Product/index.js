@@ -26,26 +26,12 @@ export default class Product extends Component {
     const itemId = urlParams.get('pid');
     this.setState({ itemId });
 
-    await getInfoAPI
-      .itemInfo({ itemId })
-      .then((res) => {
-        const rd = res.data;
-        this.setState({ product: rd });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    let res = await getInfoAPI.itemInfo({ itemId });
+    this.setState({ product: res.data });
 
     const oid = this.state.product?.owner?.$oid;
-    await getInfoAPI
-      .userInfo({ userId: oid })
-      .then((res) => {
-        const rd = res.data;
-        this.setState({ owner: rd });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    res = await getInfoAPI.userInfo({ userId: oid });
+    this.setState({ owner: res.data });
   }
 
   render() {
@@ -64,9 +50,9 @@ export default class Product extends Component {
           <Col>
             <Carousel>
               <Carousel.Item>
-                {this.props.product?.image_urls.map((image_url, i) => {
-                  return <Image key={i} src={image_url} fluid />;
-                })}
+                {this.props.product?.image_urls.map((image_url, i) => (
+                  <Image key={i} src={image_url} fluid />
+                ))}
                 <Image src={aaa} fluid />
               </Carousel.Item>
             </Carousel>
@@ -75,7 +61,7 @@ export default class Product extends Component {
             <h3>{this.state.product?.name}</h3>
             <p>{this.state.product?.description}</p>
             <p>
-              <a href={`/user?uid=${this.state.owner?._id}`}>
+              <a href={`/user?uid=${this.state.owner?._id.$oid}`}>
                 {this.state.owner?.username}
               </a>
             </p>

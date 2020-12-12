@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Carousel, Card, CardColumns, Image } from 'react-bootstrap';
 
 import AddCartButton from '../AddCartButton';
+import getInfoAPI from '../../api/getInfoAPI';
 import { formatPrice } from '../../utils';
 
+import { SELLER_DISPLAY_AMOUNT, PRODUCT_DISPLAY_AMOUNT } from './constant';
 import slide1 from '../../img/slide1.svg';
 import slide2 from '../../img/slide2.svg';
 import slide3 from '../../img/slide3.svg';
@@ -13,9 +15,48 @@ import userImg from '../../img/user.svg';
 export default class Main extends Component {
   constructor(props) {
     super(props);
-    this.renderSlider = this.renderSlider.bind(this);
-    this.renderUsers = this.renderUsers.bind(this);
-    this.renderProductCards = this.renderProductCards.bind(this);
+    this.state = {
+      sellerIds: [],
+      sellers: [],
+      productIds: [],
+      products: [],
+    };
+  }
+
+  componentDidMount() {
+    this.getSellersInfo();
+    this.getProductsInfo();
+  }
+
+  async getSellersInfo() {
+    const res = await getInfoAPI.allCollector({
+      length: SELLER_DISPLAY_AMOUNT,
+    });
+    const sellerIds = res.data.collectors.map((collector) => collector.$oid);
+    this.setState({ sellerIds });
+
+    const sellers = await Promise.all(
+      sellerIds.map(async (sellerId) => {
+        const res = await getInfoAPI.userInfo({ userId: sellerId });
+        return res.data;
+      }),
+    );
+    this.setState({ sellers });
+  }
+
+  async getProductsInfo() {
+    const res = await getInfoAPI.allProduct({ length: PRODUCT_DISPLAY_AMOUNT });
+    const productIds = res.data.products;
+    this.setState({ productIds });
+
+    const products = await Promise.all(
+      productIds.map(async (productId) => {
+        const res = await getInfoAPI.itemInfo({ itemId: productId });
+        return res.data;
+      }),
+    );
+
+    this.setState({ products });
   }
 
   renderSlider() {
@@ -48,38 +89,31 @@ export default class Main extends Component {
     );
   }
 
-  renderUsers() {
-    return (
-      <div>
-        <Image src={userImg} roundedCircle />
-      </div>
-    );
+  renderSellers() {
+    const sellers = this.state.sellers.map((seller, i) => {
+      return (
+        <h3 key={i}>
+          <a href={`/user?uid=${this.state.sellerIds[i]}`}>{seller.username}</a>
+        </h3>
+      );
+    });
+
+    return <div>{sellers}</div>;
   }
 
   renderProductCards() {
-    const datas = [
-      {
-        item_id: '5fce2816c9a550fbdeee3761',
-        name: 'Product1',
-        price: 10,
-      },
-      {
-        item_id: '5fce2816c9a550fbdeee3761',
-        name: 'Product2',
-        price: 20,
-      },
-    ];
-
-    const cards = datas.map((data, i) => {
+    const cards = this.state.products.map((product, i) => {
       return (
         <Card key={i}>
           <Card.Img variant="top" src={card} />
           <Card.Body>
             <Card.Title>
-              <a href={`/product?pid=${data.item_id}`}>{data.name}</a>
+              <a href={`/product?pid=${this.state.productIds[i]}`}>
+                {product.name}
+              </a>
             </Card.Title>
-            <Card.Text>{formatPrice(data.price)}</Card.Text>
-            <AddCartButton item_id={data.item_id} />
+            <Card.Text>{formatPrice(product.price)}</Card.Text>
+            <AddCartButton item_id={product.item_id} />
           </Card.Body>
         </Card>
       );
@@ -91,9 +125,9 @@ export default class Main extends Component {
   render() {
     return (
       <>
-        {this.renderSlider()}
+        {/* {this.renderSlider()} */}
         <br />
-        {this.renderUsers()}
+        {this.renderSellers()}
         <br />
         {this.renderProductCards()}
       </>

@@ -10,14 +10,7 @@ export default class Account extends Component {
 
   async getUserInfo() {
     const userId = localStorage.getItem('userId');
-    await getInfoAPI
-      .userInfo({ userId })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    await getInfoAPI.userInfo({ userId });
   }
 
   render() {

@@ -12,23 +12,21 @@ export default class Register extends Component {
   }
 
   async handleSubmit(e) {
+    e.preventDefault();
+    e.stopPropagation();
     const form = e.target;
     const data = {
       email: form.email.value,
       username: form.username.value,
       password: form.password.value,
     };
-    await userAPI
-      .register(data)
-      .then((res) => {
-        const rd = res.data;
-        console.log(rd);
-        window.location.href = '/login';
-      })
-      .catch((err) => {
-        alert('Register Failed!');
-        console.error(err);
-      });
+    try {
+      await userAPI.register(data);
+      window.location.href = '/login';
+    } catch (err) {
+      alert('Register Failed!');
+      console.error(err);
+    }
   }
 
   render() {

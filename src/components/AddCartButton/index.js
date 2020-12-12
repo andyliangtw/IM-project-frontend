@@ -19,14 +19,7 @@ export default class AddCartButton extends Component {
   async addToCart() {
     const item_id = this.props.item_id;
     const params = { item_id, amount: this.props.amount || 1 };
-    await operationAPI
-      .addCart(params)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    await operationAPI.addCart(params);
   }
 
   render() {
