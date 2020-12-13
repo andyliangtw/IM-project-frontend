@@ -29,7 +29,12 @@ export default class Cart extends Component {
     const products = await Promise.all(
       Object.keys(sellList).map(async (itemId) => {
         const res = await getInfoAPI.itemInfo({ itemId });
-        return { ...res.data, id: itemId, amount: sellList[itemId] };
+        return {
+          ...res.data,
+          id: itemId,
+          amount: sellList[itemId],
+          isEdit: false,
+        };
       }),
     );
     this.setState({
@@ -162,6 +167,7 @@ export default class Cart extends Component {
         const res = await operationAPI.addProduct(newProduct);
         const { products } = this.state;
         newProduct.id = res.data.productId.$oid;
+        newProduct.isEdit = false;
         const newProducts = [...products, newProduct];
 
         this.setState({
