@@ -6,11 +6,11 @@ import getInfoAPI from '../../api/getInfoAPI';
 import { formatPrice } from '../../utils';
 
 import { SELLER_DISPLAY_AMOUNT, PRODUCT_DISPLAY_AMOUNT } from './constant';
-import slide1 from '../../img/slide1.svg';
-import slide2 from '../../img/slide2.svg';
-import slide3 from '../../img/slide3.svg';
-import productImg from '../../img/card.svg';
-import userImg from '../../img/profile-user.svg';
+import banner1 from '../../img/banner1.png';
+import banner2 from '../../img/banner2.png';
+import banner3 from '../../img/banner3.png';
+import productDefaultImg from '../../img/product_default.svg';
+import userDefaultImg from '../../img/user_default.svg';
 
 export default class Main extends Component {
   constructor(props) {
@@ -66,27 +66,13 @@ export default class Main extends Component {
     return (
       <Carousel>
         <Carousel.Item>
-          <img className="d-block w-100" src={slide1} alt="First slide" />
-          <Carousel.Caption>
-            <h3>First slide label</h3>
-            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-          </Carousel.Caption>
+          <Image src={banner1} alt="First slide" fluid />
         </Carousel.Item>
         <Carousel.Item>
-          <img className="d-block w-100" src={slide2} alt="Third slide" />
-          <Carousel.Caption>
-            <h3>Second slide label</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          </Carousel.Caption>
+          <Image src={banner2} alt="Third slide" fluid />
         </Carousel.Item>
         <Carousel.Item>
-          <img className="d-block w-100" src={slide3} alt="Third slide" />
-          <Carousel.Caption>
-            <h3>Third slide label</h3>
-            <p>
-              Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-            </p>
-          </Carousel.Caption>
+          <Image src={banner3} alt="Third slide" fluid />
         </Carousel.Item>
       </Carousel>
     );
@@ -100,7 +86,7 @@ export default class Main extends Component {
           key={i}
           className="d-inline-flex flex-column align-items-center m-3">
           <Image
-            src={userImg}
+            src={userDefaultImg}
             style={{ width: '100px', height: '100px' }}
             roundedCircle
           />
@@ -121,7 +107,7 @@ export default class Main extends Component {
         <Card key={i} style={{ minWidth: '18rem', maxWidth: '18rem' }}>
           <Card.Img
             variant="top"
-            src={product.image_urls ? product.image_urls[0] : productImg}
+            src={product.image_urls ? product.image_urls[0] : productDefaultImg}
           />
           <Card.Body>
             <Card.Title>
