@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import userAPI from '../../api/userAPI';
 import { isLogin } from '../../utils';
 
-import './style.scss';
+import '../style.scss';
 
 export default class Register extends Component {
   constructor(props) {

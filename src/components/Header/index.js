@@ -3,7 +3,7 @@ import { Navbar, NavDropdown, Button } from 'react-bootstrap';
 
 import { isLogin } from '../../utils';
 
-import './style.scss';
+import '../style.scss';
 
 export default class Header extends Component {
   render() {

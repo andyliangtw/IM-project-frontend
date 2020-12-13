@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 
 import operationAPI from '../../api/operationAPI';
 
-import './style.scss';
+import '../style.scss';
 
 export default class AddCartBtn extends Component {
   constructor(props) {

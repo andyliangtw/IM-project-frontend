@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 
-import './style.scss';
+import '../style.scss';
 
 export default class Footer extends Component {
   render() {

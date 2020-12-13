@@ -5,7 +5,7 @@ import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
 import { formatPrice, dCopy } from '../../utils';
 
-import './style.scss';
+import '../style.scss';
 
 export default class Cart extends Component {
   constructor(props) {
