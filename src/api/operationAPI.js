@@ -2,7 +2,7 @@ import api from './api';
 
 const operationAPI = {};
 
-operationAPI.addCart = (item_id) => {
+operationAPI.addCart = (data) => {
   const url = `/addCart`;
   return api.fire({
     url,
@@ -10,11 +10,11 @@ operationAPI.addCart = (item_id) => {
       'Content-Type': 'application/json',
     },
     method: 'POST',
-    data: item_id,
+    data,
   });
 };
 
-operationAPI.removeCart = (item_id) => {
+operationAPI.removeCart = (data) => {
   const url = `/removeCart`;
   return api.fire({
     url,
@@ -22,7 +22,7 @@ operationAPI.removeCart = (item_id) => {
       'Content-Type': 'application/json',
     },
     method: 'POST',
-    data: item_id,
+    data,
   });
 };
 

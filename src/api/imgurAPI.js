@@ -1,26 +1,26 @@
-import axios from 'axios';
-import FormData from 'form-data';
+import api from './api';
 
-const data = new FormData();
-data.append(
-  'image',
-  'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-);
+const imgurAPI = {};
 
-const config = {
-  method: 'POST',
-  url: 'https://api.imgur.com/3/image',
-  headers: {
-    Authorization: 'Client-ID fb99377dccd183d',
-    ...data.getHeaders(),
-  },
-  data: data,
+const API_HOST = 'https://api.imgur.com';
+
+imgurAPI.uploadImg = (img) => {
+  const data = new FormData();
+  data.append(
+    'image',
+    'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+  );
+  return api.fire(
+    {
+      url: `/3/image`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Client-ID fb99377dccd183d',
+        ...data.getHeaders(),
+      },
+      method: 'POST',
+      data,
+    },
+    API_HOST,
+  );
 };
-
-axios(config)
-  .then(function (response) {
-    console.log(JSON.stringify(response.data));
-  })
-  .catch(function (error) {
-    console.log(error);
-  });

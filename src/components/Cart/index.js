@@ -3,6 +3,7 @@ import { Button, Table } from 'react-bootstrap';
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
+import transactionAPI from '../../api/transactionAPI';
 import { formatPrice } from '../../utils';
 
 import '../style.scss';
@@ -11,9 +12,7 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      itemIds: [],
       products: [],
-      amounts: [],
     };
   }
 
@@ -25,27 +24,26 @@ export default class Cart extends Component {
     const userId = localStorage.getItem('userId');
     const res = await getInfoAPI.userInfo({ userId });
     const cartList = res.data.cart_list;
-    const itemIds = Object.keys(cartList).map((key) => key);
-    const amounts = Object.values(cartList).map((amount) => amount);
 
     const products = await Promise.all(
-      itemIds.map(async (itemId) => {
+      Object.keys(cartList).map(async (itemId, i) => {
         const res = await getInfoAPI.itemInfo({ itemId });
-        return res.data;
+        return { ...res.data, id: itemId, amount: cartList[itemId] };
       }),
     );
-    this.setState({ itemIds, products, amounts });
+    this.setState({ products });
   }
 
   renderRemoveCartBtn(i) {
     const handleRemoveCartBtnClick = async () => {
-      const { itemIds, products, amounts } = this.state;
-      const params = { item_id: itemIds[i], amount: amounts[i] };
-      await operationAPI.removeCart(params);
-      itemIds.splice(i, 1);
+      const { products } = this.state;
+      const data = {
+        item_id: products[i].id,
+        amount: products[i].amount,
+      };
+      await operationAPI.removeCart(data);
       products.splice(i, 1);
-      amounts.splice(i, 1);
-      this.setState({ itemIds, products, amounts });
+      this.setState({ products });
     };
 
     return (
@@ -55,19 +53,31 @@ export default class Cart extends Component {
     );
   }
 
+  renderCheckoutBtn() {
+    const handleCheckoutBtnClick = async () => {
+      await transactionAPI.comfirmOrder();
+    };
+
+    return (
+      <Button className="beauty-btn" onChange={handleCheckoutBtnClick}>
+        Checkout
+      </Button>
+    );
+  }
+
   render() {
-    const { itemIds, products, amounts } = this.state;
+    const { products } = this.state;
     let overAllPrice = 0;
     const cart = products.map((product, i) => {
-      const totalPrice = product.price * amounts[i];
+      const totalPrice = product.price * product.amount;
       overAllPrice += totalPrice;
       return (
         <tr key={i}>
           <td>
-            <a href={`/product?pid=${itemIds[i]}`}>{product.name}</a>
+            <a href={`/product?pid=${product.id}`}>{product.name}</a>
           </td>
           <td>{formatPrice(product.price)}</td>
-          <td>{amounts[i]}</td>
+          <td>{product.amount}</td>
           <td>{formatPrice(totalPrice)}</td>
           <td>{this.renderRemoveCartBtn(i)}</td>
         </tr>
@@ -89,8 +99,8 @@ export default class Cart extends Component {
           </thead>
           <tbody>{cart}</tbody>
         </Table>
-        <h3>Total Price: {formatPrice(overAllPrice)}</h3>
-        <Button className="beauty-btn">Checkout</Button>
+        <h5>Total Price: {formatPrice(overAllPrice)}</h5>
+        {this.renderCheckoutBtn()}
       </div>
     );
   }

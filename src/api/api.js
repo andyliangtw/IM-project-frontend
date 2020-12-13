@@ -7,7 +7,7 @@ const instance = axios.create({
   timeout: API_TIMEOUT_DUR,
 });
 
-api.fire = async (options, API_HOST = 'http://localhost:5000') => {
+api.fire = async (options, API_HOST = process.env.REACT_APP_API_HOST) => {
   return instance
     .request({
       ...options,

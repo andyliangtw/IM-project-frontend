@@ -19,7 +19,6 @@ export default class Header extends Component {
             title={localStorage.getItem('username') || 'User'}
             id="basic-nav-dropdown">
             <NavDropdown.Item href="/cart">My Cart</NavDropdown.Item>
-            <NavDropdown.Divider />
             <NavDropdown.Item href="/sells">My Sells</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item href="/account">Account</NavDropdown.Item>

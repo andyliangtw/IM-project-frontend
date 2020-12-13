@@ -50,4 +50,16 @@ getInfoAPI.userInfo = (userId) => {
   });
 };
 
+getInfoAPI.getTransactionInfo = (transaction_address) => {
+  const url = `/getTransactionInfo`;
+  return api.fire({
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    data: transaction_address,
+  });
+};
+
 export default getInfoAPI;

@@ -16,11 +16,8 @@ export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sellerIds: [],
       sellers: [],
-      productIds: [],
       products: [],
-      amounts: [],
     };
   }
 
@@ -33,13 +30,13 @@ export default class Main extends Component {
     const res = await getInfoAPI.allCollector({
       length: SELLER_DISPLAY_AMOUNT,
     });
-    const sellerIds = res.data.collectors.map((collector) => collector.$oid);
-    this.setState({ sellerIds });
+    const rd = res.data.collectors;
 
     const sellers = await Promise.all(
-      sellerIds.map(async (sellerId) => {
-        const res = await getInfoAPI.userInfo({ userId: sellerId });
-        return res.data;
+      rd.map(async (seller) => {
+        const userId = seller.$oid;
+        const res = await getInfoAPI.userInfo({ userId });
+        return { ...res.data, id: userId };
       }),
     );
     this.setState({ sellers });
@@ -48,14 +45,12 @@ export default class Main extends Component {
   async getProductsInfo() {
     const res = await getInfoAPI.allProduct({ length: PRODUCT_DISPLAY_AMOUNT });
     const rd = res.data.products;
-    const productIds = rd.map((product) => product.itemId);
-    const amounts = rd.map((product) => product.amount);
-    this.setState({ productIds, amounts });
 
     const products = await Promise.all(
-      productIds.map(async (productId) => {
-        const res = await getInfoAPI.itemInfo({ itemId: productId });
-        return res.data;
+      rd.map(async (product) => {
+        const itemId = product.itemId;
+        const res = await getInfoAPI.itemInfo({ itemId });
+        return { ...res.data, id: itemId, amount: product.amounts };
       }),
     );
 
@@ -66,21 +61,22 @@ export default class Main extends Component {
     return (
       <Carousel>
         <Carousel.Item>
-          <Image src={banner1} alt="First slide" fluid />
+          <Image src={banner1} alt="First banner" fluid />
         </Carousel.Item>
         <Carousel.Item>
-          <Image src={banner2} alt="Third slide" fluid />
+          <Image src={banner2} alt="Second banner" fluid />
         </Carousel.Item>
         <Carousel.Item>
-          <Image src={banner3} alt="Third slide" fluid />
+          <Image src={banner3} alt="Third banner" fluid />
         </Carousel.Item>
       </Carousel>
     );
   }
 
-  renderSellers() {
-    const sellers = this.state.sellers.map((seller, i) => {
-      const url = `/user?uid=${this.state.sellerIds[i]}`;
+  renderSellerCards() {
+    const { sellers } = this.state;
+    const sellerCards = sellers.map((seller, i) => {
+      const url = `/user?uid=${seller.id}`;
       return (
         <div
           key={i}
@@ -97,11 +93,11 @@ export default class Main extends Component {
       );
     });
 
-    return <div>{sellers}</div>;
+    return <div>{sellerCards}</div>;
   }
 
   renderProductCards() {
-    const { products, productIds } = this.state;
+    const { products } = this.state;
     const cards = products.map((product, i) => {
       return (
         <Card key={i} style={{ minWidth: '18rem', maxWidth: '18rem' }}>
@@ -111,10 +107,15 @@ export default class Main extends Component {
           />
           <Card.Body>
             <Card.Title>
-              <a href={`/product?pid=${productIds[i]}`}>{product.name}</a>
+              <a href={`/product?pid=${product.id}`}>{product.name}</a>
             </Card.Title>
-            <Card.Text>{formatPrice(product.price)}</Card.Text>
-            <AddCartBtn item_id={productIds[i]} />
+            <Card.Text>
+              <b>{formatPrice(product.price)}</b>
+            </Card.Text>
+            <Card.Text>
+              Remain: <b>{product.amount}</b>
+            </Card.Text>
+            <AddCartBtn item_id={product.id} />
           </Card.Body>
         </Card>
       );
@@ -128,7 +129,7 @@ export default class Main extends Component {
       <>
         {this.renderSlider()}
         <br />
-        {this.renderSellers()}
+        {this.renderSellerCards()}
         <br />
         {this.renderProductCards()}
       </>

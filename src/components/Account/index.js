@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-// import { Form, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
 import getInfoAPI from '../../api/getInfoAPI';
 
 export default class Account extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      data: {},
+    };
   }
 
   componentDidMount() {
@@ -18,16 +20,24 @@ export default class Account extends Component {
     await getInfoAPI.userInfo({ userId });
 
     const res = await getInfoAPI.userInfo({ userId });
-    this.setState({ ...res.data });
+    this.setState({ data: res.data });
   }
 
   render() {
+    const { data } = this.state;
     return (
       <div>
-        <h3>{this.state.username}</h3>
-        <p>Email: {this.state.email}</p>
-        <p>Wallet: {this.state.wallet_address}</p>
-        <p>- Balance: {this.state.balance}</p>
+        <h2>{data.username}</h2>
+        <p>
+          Email: <a href={`mailto:${data.email}`}>{data.email}</a>
+        </p>
+        <p>
+          Wallet:{' '}
+          <a href={`${process.env.REACT_APP_ETHERSCAN}${data.wallet_address}`}>
+            {data.wallet_address}
+          </a>
+        </p>
+        <p>- Balance: {data.balance}</p>
       </div>
     );
   }

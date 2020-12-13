@@ -11,12 +11,8 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      itemIds: [],
       products: [],
       products_prev: [],
-      amounts: [],
-      amounts_prev: [],
-      isEdit: [],
       isAdding: false,
     };
   }
@@ -29,30 +25,22 @@ export default class Cart extends Component {
     const userId = localStorage.getItem('userId');
     const res = await getInfoAPI.userInfo({ userId });
     const sellList = res.data.sell_list;
-    const itemIds = Object.keys(sellList).map((key) => key);
-    const amounts = Object.values(sellList).map((amount) => amount);
-    const isEdit = itemIds.map(() => false);
 
     const products = await Promise.all(
-      itemIds.map(async (itemId) => {
+      Object.keys(sellList).map(async (itemId) => {
         const res = await getInfoAPI.itemInfo({ itemId });
-        return res.data;
+        return { ...res.data, id: itemId, amount: sellList[itemId] };
       }),
     );
     this.setState({
-      itemIds,
       products,
       products_prev: dCopy(products),
-      amounts,
-      amounts_prev: dCopy(amounts),
-      isEdit,
     });
   }
 
   renderOperationBtns(i) {
-    const { isEdit } = this.state;
-
-    return isEdit[i] ? (
+    const { products } = this.state;
+    return products[i].isEdit ? (
       <>
         {this.renderDoneBtn(i)} {this.renderCancelBtn(i)}
       </>
@@ -64,10 +52,11 @@ export default class Cart extends Component {
   }
 
   renderEditBtn(i) {
-    const { isEdit } = this.state;
+    const { products } = this.state;
     const handleEditBtnClick = (i) => {
-      isEdit[i] = true;
-      this.setState({ isEdit });
+      products[i].isEdit = true;
+
+      this.setState({ products });
     };
 
     return (
@@ -79,19 +68,12 @@ export default class Cart extends Component {
 
   renderRemoveProductBtn(i) {
     const handleRemoveProductBtnClick = async () => {
-      const { itemIds, products, amounts, isEdit } = this.state;
-      await operationAPI.removeProduct({ item_id: itemIds[i] });
-      itemIds.splice(i, 1);
+      const { products } = this.state;
+      await operationAPI.removeProduct({ item_id: products[i].id });
       products.splice(i, 1);
-      amounts.splice(i, 1);
-      isEdit.splice(i, 1);
       this.setState({
-        itemIds,
         products,
         products_prev: dCopy(products),
-        amounts,
-        amounts_prev: dCopy(amounts),
-        isEdit,
       });
     };
 
@@ -103,22 +85,20 @@ export default class Cart extends Component {
   }
 
   renderDoneBtn(i) {
-    const { isEdit, products, amounts, itemIds } = this.state;
+    const { products } = this.state;
     const handleDoneBtnClick = async (i) => {
       const newProduct = {
-        item_id: itemIds[i],
+        item_id: products[i].id,
         name: products[i].name,
         description: products[i].description,
         price: products[i].price,
-        amount: amounts[i],
+        amount: products[i].amount,
       };
       await operationAPI.reviseProduct(newProduct);
 
-      isEdit[i] = false;
+      products[i].isEdit = false;
       this.setState({
-        isEdit,
         products_prev: dCopy(products),
-        amounts_prev: dCopy(amounts),
       });
     };
 
@@ -134,14 +114,12 @@ export default class Cart extends Component {
   }
 
   renderCancelBtn(i) {
-    const { isEdit, products_prev, amounts_prev } = this.state;
+    const { products, products_prev } = this.state;
 
-    const handleCancelBtnClick = async (i) => {
-      isEdit[i] = false;
+    const handleCancelBtnClick = (i) => {
+      products[i].isEdit = false;
       this.setState({
-        isEdit,
         products: dCopy(products_prev),
-        amounts: dCopy(amounts_prev),
       });
     };
 
@@ -177,25 +155,18 @@ export default class Cart extends Component {
         name: form.name.value,
         description: form.description.value,
         price: Number(form.price.value),
+        amount: Number(form.amount.value),
       };
-      const newAmount = Number(form.amount.value);
 
       try {
-        const res = await operationAPI.addProduct({
-          ...newProduct,
-          amount: newAmount,
-        });
-        const { products, amounts, itemIds } = this.state;
+        const res = await operationAPI.addProduct(newProduct);
+        const { products } = this.state;
+        newProduct.id = res.data.productId.$oid;
         const newProducts = [...products, newProduct];
-        const newAmounts = amounts.concat(newAmount);
-        const newItemIds = itemIds.concat(res.data.productId.$oid);
 
         this.setState({
-          itemIds: newItemIds,
           products: newProducts,
           products_prev: dCopy(newProducts),
-          amounts: newAmounts,
-          amounts_prev: dCopy(newAmounts),
           isAdding: false,
         });
       } catch (err) {
@@ -279,7 +250,7 @@ export default class Cart extends Component {
   }
 
   renderTable() {
-    const { itemIds, products, amounts, isEdit } = this.state;
+    const { products } = this.state;
     const handleNameChange = (i, e) => {
       products[i].name = e.target.value;
       this.setState({ products });
@@ -293,14 +264,14 @@ export default class Cart extends Component {
       this.setState({ products });
     };
     const handleAmountChange = (i, e) => {
-      amounts[i] = Number(e.target.value);
-      this.setState({ amounts });
+      products[i].amount = Number(e.target.value);
+      this.setState({ products });
     };
 
     const cart = products.map((product, i) => {
       return (
         <tr key={i}>
-          {isEdit[i] ? (
+          {product.isEdit ? (
             <>
               <td>
                 <input
@@ -333,7 +304,7 @@ export default class Cart extends Component {
                   type="number"
                   step="1"
                   min="1"
-                  value={amounts[i]}
+                  value={product.amount}
                   onChange={handleAmountChange.bind(this, i)}
                   required
                 />
@@ -342,11 +313,11 @@ export default class Cart extends Component {
           ) : (
             <>
               <td>
-                <a href={`/product?pid=${itemIds[i]}`}>{product.name}</a>
+                <a href={`/product?pid=${product.id}`}>{product.name}</a>
               </td>
               <td>{product.description}</td>
               <td>{formatPrice(product.price)}</td>
-              <td>{amounts[i]}</td>
+              <td>{product.amount}</td>
             </>
           )}
           <td>{this.renderOperationBtns(i)}</td>
