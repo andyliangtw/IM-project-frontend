@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import "./style.scss";
 
 import userAPI from '../../api/userAPI';
 import { isLogin } from '../../utils';
@@ -60,7 +61,7 @@ export default class Register extends Component {
             feedback="You must agree before submitting."
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button className="beauty-btn" variant="primary" type="submit">
           Submit
         </Button>
       </Form>

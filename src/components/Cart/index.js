@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Table } from 'react-bootstrap';
+import "./style.scss";
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
@@ -46,7 +47,7 @@ export default class Cart extends Component {
       this.setState({ itemIds, products, amounts });
     };
 
-    return <Button onClick={handleRemoveCartBtnClick}>Remove all</Button>;
+    return <Button className="beauty-btn" onClick={handleRemoveCartBtnClick}>Remove all</Button>;
   }
 
   render() {
@@ -84,7 +85,7 @@ export default class Cart extends Component {
           <tbody>{cart}</tbody>
         </Table>
         <h3>Total Price: {formatPrice(overAllPrice)}</h3>
-        <Button>Checkout</Button>
+        <Button className="beauty-btn">Checkout</Button>
       </div>
     );
   }
