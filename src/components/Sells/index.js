@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Table } from 'react-bootstrap';
+import "./style.scss";
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
@@ -45,7 +46,7 @@ export default class Cart extends Component {
     };
 
     return isEdit[i] ? (
-      <Button
+      <Button className="beauty-btn"
         onClick={() => {
           handleDoneBtnClick(i);
         }}>
@@ -65,7 +66,7 @@ export default class Cart extends Component {
       this.setState({ isEdit });
     };
 
-    return <Button onClick={() => handleEditBtnClick(i)}>Edit</Button>;
+    return <Button className="beauty-btn" onClick={() => handleEditBtnClick(i)}>Edit</Button>;
   }
 
   renderRemoveProductBtn(i) {
@@ -78,7 +79,7 @@ export default class Cart extends Component {
       this.setState({ itemIds, products, amounts });
     };
 
-    return <Button onClick={handleRemoveProductBtnClick}>Remove</Button>;
+    return <Button className="beauty-btn" onClick={handleRemoveProductBtnClick}>Remove</Button>;
   }
 
   render() {
@@ -149,7 +150,7 @@ export default class Cart extends Component {
           </thead>
           <tbody>{cart}</tbody>
         </Table>
-        <Button>Add</Button>
+        <Button className="beauty-btn">Add</Button>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import "./style.scss";
 import {
   Navbar,
   Nav,
@@ -36,7 +37,7 @@ export default class Footer extends Component {
               placeholder="Your Email"
               className="mr-sm-2"
             />
-            <Button variant="outline-success">Contact Us</Button>
+            <Button className="beauty-btn" variant="outline-success">Contact Us</Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>

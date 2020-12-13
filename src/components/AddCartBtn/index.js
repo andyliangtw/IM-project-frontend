@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
+import "./style.scss";
 
 import operationAPI from '../../api/operationAPI';
 
@@ -23,6 +24,6 @@ export default class AddCartBtn extends Component {
   }
 
   render() {
-    return <Button onClick={this.handleClick}>Add To Cart</Button>;
+    return <Button className="beauty-btn" onClick={this.handleClick}>Add To Cart</Button>;
   }
 }

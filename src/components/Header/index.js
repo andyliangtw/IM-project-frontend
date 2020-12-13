@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import "./style.scss";
 import {
   Navbar,
   NavDropdown,
@@ -31,10 +32,10 @@ export default class Header extends Component {
             </NavDropdown>
           ) : (
             <div>
-              <Button href="/register" variant="link">
+              <Button className="beauty-btn" href="/register">
                 Register
               </Button>{' '}
-              <Button href="/login">Login</Button>
+              <Button className="beauty-btn" href="/login">Login</Button>
             </div>
           )}
         </Navbar.Collapse>

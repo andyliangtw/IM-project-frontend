@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import "./style.scss";
 
 import userAPI from '../../api/userAPI';
 import { isLogin } from '../../utils';
@@ -52,7 +53,7 @@ export default class Login extends Component {
           <Form.Label>Password</Form.Label>
           <Form.Control required type="password" placeholder="Password" />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button className="beauty-btn" variant="primary" type="submit">
           Submit
         </Button>
       </Form>
