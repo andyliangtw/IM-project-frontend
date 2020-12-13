@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Form, Row, Col } from 'react-bootstrap';
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
@@ -17,6 +17,7 @@ export default class Cart extends Component {
       amounts: [],
       amounts_prev: [],
       isEdit: [],
+      isAdding: false,
     };
   }
 
@@ -78,12 +79,20 @@ export default class Cart extends Component {
 
   renderRemoveProductBtn(i) {
     const handleRemoveProductBtnClick = async () => {
-      const { itemIds, products, amounts } = this.state;
+      const { itemIds, products, amounts, isEdit } = this.state;
       await operationAPI.removeProduct({ item_id: itemIds[i] });
       itemIds.splice(i, 1);
       products.splice(i, 1);
       amounts.splice(i, 1);
-      this.setState({ itemIds, products, amounts });
+      isEdit.splice(i, 1);
+      this.setState({
+        itemIds,
+        products,
+        products_prev: dCopy(products),
+        amounts,
+        amounts_prev: dCopy(amounts),
+        isEdit,
+      });
     };
 
     return (
@@ -147,7 +156,129 @@ export default class Cart extends Component {
     );
   }
 
-  render() {
+  renderAddProductBtn() {
+    const handleAddProductBtnClick = () => {
+      this.setState({ isAdding: true });
+    };
+
+    return (
+      <Button className="beauty-btn" onClick={handleAddProductBtnClick}>
+        Add New One
+      </Button>
+    );
+  }
+
+  renderAddProductForm() {
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const form = e.target;
+      const newProduct = {
+        name: form.name.value,
+        description: form.description.value,
+        price: Number(form.price.value),
+      };
+      const newAmount = Number(form.amount.value);
+
+      try {
+        const res = await operationAPI.addProduct({
+          ...newProduct,
+          amount: newAmount,
+        });
+        const { products, amounts, itemIds } = this.state;
+        const newProducts = [...products, newProduct];
+        const newAmounts = amounts.concat(newAmount);
+        const newItemIds = itemIds.concat(res.data.productId.$oid);
+
+        this.setState({
+          itemIds: newItemIds,
+          products: newProducts,
+          products_prev: dCopy(newProducts),
+          amounts: newAmounts,
+          amounts_prev: dCopy(newAmounts),
+          isAdding: false,
+        });
+      } catch (err) {
+        console.error(err);
+        alert(err.response.data.response);
+      }
+    };
+
+    const handleCancelBtnClick = () => {
+      this.setState({ isAdding: false });
+    };
+
+    return (
+      <>
+        <h3>Add a new product</h3>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group as={Row} controlId="name">
+            <Form.Label column sm={2}>
+              Name
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control required type="text" placeholder="Name" />
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} controlId="description">
+            <Form.Label column sm={2}>
+              Description
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Description" />
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} controlId="price">
+            <Form.Label column sm={2}>
+              Price
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control
+                required
+                type="number"
+                step="1"
+                min="1"
+                placeholder="1"
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} controlId="amount">
+            <Form.Label column sm={2}>
+              Amount
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control
+                required
+                type="number"
+                step="1"
+                min="1"
+                placeholder="1"
+              />
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row}>
+            <Col sm={{ span: 10, offset: 2 }}>
+              <Button type="submit" className="beauty-btn">
+                Add
+              </Button>{' '}
+              <Button type="reset" className="beauty-btn">
+                Reset
+              </Button>{' '}
+              <Button className="beauty-btn" onClick={handleCancelBtnClick}>
+                Cancel
+              </Button>
+            </Col>
+          </Form.Group>
+        </Form>
+      </>
+    );
+  }
+
+  renderTable() {
     const { itemIds, products, amounts, isEdit } = this.state;
     const handleNameChange = (i, e) => {
       products[i].name = e.target.value;
@@ -224,21 +355,28 @@ export default class Cart extends Component {
     });
 
     return (
+      <Table striped bordered hover responsive size="sm">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Amount</th>
+            <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>{cart}</tbody>
+      </Table>
+    );
+  }
+
+  render() {
+    const { isAdding } = this.state;
+    return (
       <div>
         <h2>My Sells</h2>
-        <Table striped bordered hover size="sm">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Operation</th>
-            </tr>
-          </thead>
-          <tbody>{cart}</tbody>
-        </Table>
-        <Button className="beauty-btn">Add</Button>
+        {this.renderTable()}
+        {isAdding ? this.renderAddProductForm() : this.renderAddProductBtn()}
       </div>
     );
   }
