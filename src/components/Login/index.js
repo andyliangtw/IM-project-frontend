@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
-import "./style.scss";
 
 import userAPI from '../../api/userAPI';
 import { isLogin } from '../../utils';
+
+import './style.scss';
 
 export default class Login extends Component {
   constructor(props) {

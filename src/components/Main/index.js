@@ -140,7 +140,7 @@ export default class Main extends Component {
   render() {
     return (
       <>
-        {/* {this.renderSlider()} */}
+        {this.renderSlider()}
         <br />
         {this.renderSellers()}
         <br />

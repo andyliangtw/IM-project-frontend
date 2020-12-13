@@ -37,3 +37,21 @@ export function checkPassword(pwd) {
   const mediumRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$');
   return mediumRegex.test(pwd);
 }
+
+export function dCopy(obj) {
+  if (obj === null) {
+    return null;
+  }
+
+  if (obj === undefined) {
+    return undefined;
+  }
+
+  let val;
+  const ret = Array.isArray(obj) ? [] : {};
+  Object.keys(obj).forEach(key => {
+    val = obj[key];
+    ret[key] = typeof val === 'object' ? dCopy(val) : val;
+  });
+  return ret;
+}

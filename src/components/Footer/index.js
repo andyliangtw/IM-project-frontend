@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import "./style.scss";
 import {
   Navbar,
   Nav,
@@ -8,6 +7,8 @@ import {
   FormControl,
   Button,
 } from 'react-bootstrap';
+
+import './style.scss';
 
 export default class Footer extends Component {
   render() {
@@ -37,7 +38,9 @@ export default class Footer extends Component {
               placeholder="Your Email"
               className="mr-sm-2"
             />
-            <Button className="beauty-btn" variant="outline-success">Contact Us</Button>
+            <Button className="beauty-btn" variant="outline-success">
+              Contact Us
+            </Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>

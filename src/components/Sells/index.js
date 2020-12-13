@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Table } from 'react-bootstrap';
-import "./style.scss";
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
-import { formatPrice } from '../../utils';
+import { formatPrice, dCopy } from '../../utils';
+
+import './style.scss';
 
 export default class Cart extends Component {
   constructor(props) {
@@ -12,7 +13,9 @@ export default class Cart extends Component {
     this.state = {
       itemIds: [],
       products: [],
+      products_prev: [],
       amounts: [],
+      amounts_prev: [],
       isEdit: [],
     };
   }
@@ -35,23 +38,23 @@ export default class Cart extends Component {
         return res.data;
       }),
     );
-    this.setState({ itemIds, products, amounts, isEdit });
+    this.setState({
+      itemIds,
+      products,
+      products_prev: dCopy(products),
+      amounts,
+      amounts_prev: dCopy(amounts),
+      isEdit,
+    });
   }
 
   renderOperationBtns(i) {
     const { isEdit } = this.state;
-    const handleDoneBtnClick = async (i) => {
-      isEdit[i] = false;
-      this.setState({ isEdit });
-    };
 
     return isEdit[i] ? (
-      <Button className="beauty-btn"
-        onClick={() => {
-          handleDoneBtnClick(i);
-        }}>
-        Done
-      </Button>
+      <>
+        {this.renderDoneBtn(i)} {this.renderCancelBtn(i)}
+      </>
     ) : (
       <>
         {this.renderEditBtn(i)} {this.renderRemoveProductBtn(i)}
@@ -66,7 +69,11 @@ export default class Cart extends Component {
       this.setState({ isEdit });
     };
 
-    return <Button className="beauty-btn" onClick={() => handleEditBtnClick(i)}>Edit</Button>;
+    return (
+      <Button className="beauty-btn" onClick={() => handleEditBtnClick(i)}>
+        Edit
+      </Button>
+    );
   }
 
   renderRemoveProductBtn(i) {
@@ -79,16 +86,87 @@ export default class Cart extends Component {
       this.setState({ itemIds, products, amounts });
     };
 
-    return <Button className="beauty-btn" onClick={handleRemoveProductBtnClick}>Remove</Button>;
+    return (
+      <Button className="beauty-btn" onClick={handleRemoveProductBtnClick}>
+        Remove
+      </Button>
+    );
+  }
+
+  renderDoneBtn(i) {
+    const { isEdit, products, amounts, itemIds } = this.state;
+    const handleDoneBtnClick = async (i) => {
+      const newProduct = {
+        item_id: itemIds[i],
+        name: products[i].name,
+        description: products[i].description,
+        price: products[i].price,
+        amount: amounts[i],
+      };
+      await operationAPI.reviseProduct(newProduct);
+
+      isEdit[i] = false;
+      this.setState({
+        isEdit,
+        products_prev: dCopy(products),
+        amounts_prev: dCopy(amounts),
+      });
+    };
+
+    return (
+      <Button
+        className="beauty-btn"
+        onClick={() => {
+          handleDoneBtnClick(i);
+        }}>
+        Done
+      </Button>
+    );
+  }
+
+  renderCancelBtn(i) {
+    const { isEdit, products_prev, amounts_prev } = this.state;
+
+    const handleCancelBtnClick = async (i) => {
+      isEdit[i] = false;
+      this.setState({
+        isEdit,
+        products: dCopy(products_prev),
+        amounts: dCopy(amounts_prev),
+      });
+    };
+
+    return (
+      <Button
+        className="beauty-btn"
+        onClick={() => {
+          handleCancelBtnClick(i);
+        }}>
+        Cancel
+      </Button>
+    );
   }
 
   render() {
     const { itemIds, products, amounts, isEdit } = this.state;
+    const handleNameChange = (i, e) => {
+      products[i].name = e.target.value;
+      this.setState({ products });
+    };
+    const handleDescriptionChange = (i, e) => {
+      products[i].description = e.target.value;
+      this.setState({ products });
+    };
+    const handlePriceChange = (i, e) => {
+      products[i].price = Number(e.target.value);
+      this.setState({ products });
+    };
+    const handleAmountChange = (i, e) => {
+      amounts[i] = Number(e.target.value);
+      this.setState({ amounts });
+    };
 
     const cart = products.map((product, i) => {
-      const handleNameChange = (e) => {};
-      const handlePriceChange = (e) => {};
-      const handleAmountChange = (e) => {};
       return (
         <tr key={i}>
           {isEdit[i] ? (
@@ -97,7 +175,15 @@ export default class Cart extends Component {
                 <input
                   type="text"
                   value={product.name}
-                  onChange={handleNameChange}
+                  onChange={handleNameChange.bind(this, i)}
+                  required
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={product.description}
+                  onChange={handleDescriptionChange.bind(this, i)}
                   required
                 />
               </td>
@@ -107,7 +193,7 @@ export default class Cart extends Component {
                   step="1"
                   min="1"
                   value={product.price}
-                  onChange={handlePriceChange}
+                  onChange={handlePriceChange.bind(this, i)}
                   required
                 />
               </td>
@@ -117,7 +203,7 @@ export default class Cart extends Component {
                   step="1"
                   min="1"
                   value={amounts[i]}
-                  onChange={handleAmountChange}
+                  onChange={handleAmountChange.bind(this, i)}
                   required
                 />
               </td>
@@ -127,6 +213,7 @@ export default class Cart extends Component {
               <td>
                 <a href={`/product?pid=${itemIds[i]}`}>{product.name}</a>
               </td>
+              <td>{product.description}</td>
               <td>{formatPrice(product.price)}</td>
               <td>{amounts[i]}</td>
             </>
@@ -142,10 +229,11 @@ export default class Cart extends Component {
         <Table striped bordered hover size="sm">
           <thead>
             <tr>
-              <td>Name</td>
-              <td>Price</td>
-              <td>Amount</td>
-              <td>Operation</td>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Operation</th>
             </tr>
           </thead>
           <tbody>{cart}</tbody>

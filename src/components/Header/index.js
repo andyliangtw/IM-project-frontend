@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import "./style.scss";
-import {
-  Navbar,
-  NavDropdown,
-  Button,
-} from 'react-bootstrap';
+import { Navbar, NavDropdown, Button } from 'react-bootstrap';
 
 import { isLogin } from '../../utils';
+
+import './style.scss';
 
 export default class Header extends Component {
   render() {
@@ -35,7 +32,9 @@ export default class Header extends Component {
               <Button className="beauty-btn" href="/register">
                 Register
               </Button>{' '}
-              <Button className="beauty-btn" href="/login">Login</Button>
+              <Button className="beauty-btn" href="/login">
+                Login
+              </Button>
             </div>
           )}
         </Navbar.Collapse>

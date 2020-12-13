@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Table } from 'react-bootstrap';
-import "./style.scss";
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
 import { formatPrice } from '../../utils';
+
+import './style.scss';
 
 export default class Cart extends Component {
   constructor(props) {
@@ -47,7 +48,11 @@ export default class Cart extends Component {
       this.setState({ itemIds, products, amounts });
     };
 
-    return <Button className="beauty-btn" onClick={handleRemoveCartBtnClick}>Remove all</Button>;
+    return (
+      <Button className="beauty-btn" onClick={handleRemoveCartBtnClick}>
+        Remove all
+      </Button>
+    );
   }
 
   render() {
@@ -75,11 +80,11 @@ export default class Cart extends Component {
         <Table striped bordered hover size="sm">
           <thead>
             <tr>
-              <td>Name</td>
-              <td>Price</td>
-              <td>Amount</td>
-              <td>Total Price</td>
-              <td>Operation</td>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Total Price</th>
+              <th>Operation</th>
             </tr>
           </thead>
           <tbody>{cart}</tbody>
