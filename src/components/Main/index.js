@@ -76,7 +76,6 @@ export default class Main extends Component {
   renderSellerCards() {
     const { sellers } = this.state;
     const sellerCards = sellers.map((seller, i) => {
-      const url = `/user?uid=${seller.id}`;
       return (
         <div
           key={i}
@@ -87,7 +86,7 @@ export default class Main extends Component {
             roundedCircle
           />
           <h3>
-            <a href={url}>{seller.username}</a>
+            <a href={`/user?uid=${seller.id}`}>{seller.username}</a>
           </h3>
         </div>
       );

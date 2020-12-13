@@ -69,7 +69,13 @@ export default class User extends Component {
       <div>
         <h2>{data.username}</h2>
         <p>
-          Email: <a href={`mailto:${data.email}`}>{data.email}</a>
+          Email:{' '}
+          <a
+            href={`mailto:${data.email}`}
+            target="_blank"
+            rel="noopener noreferrer">
+            {data.email}
+          </a>
         </p>
         <h4>Sell list:</h4>
         {this.renderSellList()}

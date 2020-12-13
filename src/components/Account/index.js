@@ -29,11 +29,20 @@ export default class Account extends Component {
       <div>
         <h2>{data.username}</h2>
         <p>
-          Email: <a href={`mailto:${data.email}`}>{data.email}</a>
+          Email:{' '}
+          <a
+            href={`mailto:${data.email}`}
+            target="_blank"
+            rel="noopener noreferrer">
+            {data.email}
+          </a>
         </p>
         <p>
           Wallet:{' '}
-          <a href={`${process.env.REACT_APP_ETHERSCAN}${data.wallet_address}`}>
+          <a
+            href={`${process.env.REACT_APP_ETHERSCAN}${data.wallet_address}`}
+            target="_blank"
+            rel="noopener noreferrer">
             {data.wallet_address}
           </a>
         </p>
