@@ -13,6 +13,7 @@ export default class Cart extends Component {
     super(props);
     this.state = {
       products: [],
+      haveClickedCheckout: false,
     };
   }
 
@@ -55,12 +56,21 @@ export default class Cart extends Component {
 
   renderCheckoutBtn() {
     const handleCheckoutBtnClick = async () => {
-      await transactionAPI.comfirmOrder();
+      this.setState({ haveClickedCheckout: true });
+      try {
+        const res = await transactionAPI.confirmOrder();
+        alert(res.data?.response);
+        window.location.href = '/';
+      } catch (err) {
+        console.log(err);
+        alert(err?.response?.data?.message);
+      }
     };
 
+    const { haveClickedCheckout } = this.state;
     return (
-      <Button className="beauty-btn" onChange={handleCheckoutBtnClick}>
-        Checkout
+      <Button className="beauty-btn" onClick={handleCheckoutBtnClick}>
+        {haveClickedCheckout ? 'Please Wait...' : 'Checkout'}
       </Button>
     );
   }

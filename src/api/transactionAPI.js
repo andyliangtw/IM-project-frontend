@@ -2,8 +2,8 @@ import api from './api';
 
 const transactionAPI = {};
 
-transactionAPI.comfirmOrder = () => {
-  const url = `/comfirmOrder`;
+transactionAPI.confirmOrder = () => {
+  const url = `/confirmOrder`;
   return api.fire({
     url,
     headers: {

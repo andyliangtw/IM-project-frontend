@@ -2,10 +2,7 @@ import axios from 'axios';
 
 const api = {};
 
-const API_TIMEOUT_DUR = 30000;
-const instance = axios.create({
-  timeout: API_TIMEOUT_DUR,
-});
+const instance = axios.create();
 
 api.fire = async (options, API_HOST = process.env.REACT_APP_API_HOST) => {
   return instance

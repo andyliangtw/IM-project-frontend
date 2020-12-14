@@ -27,7 +27,7 @@ export default class Register extends Component {
       window.location.href = '/login';
     } catch (err) {
       console.error(err);
-      alert(err.response.data.response);
+      alert(err?.response?.data?.response);
     }
   }
 

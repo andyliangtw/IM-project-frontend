@@ -35,7 +35,7 @@ export default class Login extends Component {
       window.location.href = '/';
     } catch (err) {
       console.error(err);
-      alert(err.response.data.response);
+      alert(err?.response?.data?.response);
     }
   }
 
