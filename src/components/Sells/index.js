@@ -284,20 +284,11 @@ export default class Cart extends Component {
 
   renderTable() {
     const { products } = this.state;
-    const handleNameChange = (i, e) => {
-      products[i].name = e.target.value;
-      this.setState({ products });
-    };
-    const handleDescriptionChange = (i, e) => {
-      products[i].description = e.target.value;
-      this.setState({ products });
-    };
-    const handlePriceChange = (i, e) => {
-      products[i].price = Number(e.target.value);
-      this.setState({ products });
-    };
-    const handleAmountChange = (i, e) => {
-      products[i].amount = Number(e.target.value);
+    const handleChange = (i, type, e) => {
+      products[i][type] =
+        type === 'price' || type === 'amount'
+          ? Number(e.target.value)
+          : e.target.value;
       this.setState({ products });
     };
 
@@ -308,18 +299,15 @@ export default class Cart extends Component {
             <>
               <td>
                 <input
-                  type="text"
                   value={product.name}
-                  onChange={handleNameChange.bind(this, i)}
+                  onChange={handleChange.bind(this, i, 'name')}
                   required
                 />
               </td>
               <td>
                 <input
-                  type="text"
                   value={product.description}
-                  onChange={handleDescriptionChange.bind(this, i)}
-                  required
+                  onChange={handleChange.bind(this, i, 'description')}
                 />
               </td>
               <td>
@@ -328,7 +316,7 @@ export default class Cart extends Component {
                   step="1"
                   min="1"
                   value={product.price}
-                  onChange={handlePriceChange.bind(this, i)}
+                  onChange={handleChange.bind(this, i, 'price')}
                   required
                 />
               </td>
@@ -338,7 +326,7 @@ export default class Cart extends Component {
                   step="1"
                   min="1"
                   value={product.amount}
-                  onChange={handleAmountChange.bind(this, i)}
+                  onChange={handleChange.bind(this, i, 'amount')}
                   required
                 />
               </td>

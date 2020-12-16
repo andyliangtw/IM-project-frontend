@@ -86,9 +86,9 @@ export default class Account extends Component {
 
   renderShopRecord() {
     const { data } = this.state;
-    const { buy_transaction = [] } = data;
+    const { buy_transaction } = data;
     console.log(buy_transaction);
-    const rows = buy_transaction.map((tx, i) => {
+    const rows = buy_transaction?.map((tx, i) => {
       const products = tx.products.map((product, i) => {
         return (
           <p key={i}>
@@ -165,8 +165,8 @@ export default class Account extends Component {
 
   renderSoldProducts() {
     const { data } = this.state;
-    const { sell_transaction = [] } = data;
-    const rows = sell_transaction.map((tx, i) => {
+    const { sell_transaction } = data;
+    const rows = sell_transaction?.map((tx, i) => {
       const products = tx.products.map((product, i) => {
         return (
           <p key={i}>
