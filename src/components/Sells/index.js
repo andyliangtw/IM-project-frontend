@@ -330,6 +330,14 @@ export default class Cart extends Component {
                   required
                 />
               </td>
+              <td>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  // onChange={handleImageUpload.bind(this, i, 'image')}
+                />
+              </td>
             </>
           ) : (
             <>
@@ -339,6 +347,22 @@ export default class Cart extends Component {
               <td>{product.description}</td>
               <td>{formatPrice(product.price)}</td>
               <td>{product.amount}</td>
+              <td>
+                {product.image_urls?.map((url, i) => {
+                  return (
+                    <>
+                      <a
+                        key={i}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        {url.slice(0, 30)}...
+                      </a>
+                      <br />
+                    </>
+                  );
+                })}
+              </td>
             </>
           )}
           <td>{this.renderOperationBtns(i)}</td>
@@ -354,6 +378,7 @@ export default class Cart extends Component {
             <th>Description</th>
             <th>Price</th>
             <th>Amount</th>
+            <th>Images</th>
             <th>Operation</th>
           </tr>
         </thead>
