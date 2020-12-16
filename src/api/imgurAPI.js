@@ -2,25 +2,21 @@ import api from './api';
 
 const imgurAPI = {};
 
-const API_HOST = 'https://api.imgur.com';
-
-imgurAPI.uploadImg = (img) => {
+imgurAPI.uploadImage = (image) => {
   const data = new FormData();
-  data.append(
-    'image',
-    'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-  );
+  data.append('image', image);
   return api.fire(
     {
       url: `/3/image`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Client-ID fb99377dccd183d',
-        ...data.getHeaders(),
+        Authorization: `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`,
       },
       method: 'POST',
       data,
     },
-    API_HOST,
+    process.env.REACT_APP_IMGUR_API_HOST,
   );
 };
+
+export default imgurAPI;

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Table, Form, Row, Col } from 'react-bootstrap';
+import imageCompression from 'browser-image-compression';
 
+import imgurAPI from '../../api/imgurAPI';
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
 import { formatPrice, dCopy } from '../../utils';
@@ -155,12 +157,27 @@ export default class Cart extends Component {
     const handleSubmit = async (e) => {
       e.preventDefault();
       e.stopPropagation();
+
       const form = e.target;
+      form.addBtn.innerHTML = 'Please wait...';
+      const image_urls = await Promise.all(
+        Array.from(form.images.files).map(async (imageFile) => {
+          const compressedFile = await imageCompression(imageFile, {
+            maxSizeMB: 10,
+            maxWidthOrHeight: 1920,
+          });
+          const res = await imgurAPI.uploadImage(compressedFile);
+          return res.data.data.link;
+          // return {url: res.data.data.link, deletehash: res.data.data.deletehash} // Backend not support deletehash now
+        }),
+      );
+
       const newProduct = {
         name: form.name.value,
         description: form.description.value,
         price: Number(form.price.value),
         amount: Number(form.amount.value),
+        image_urls,
       };
 
       try {
@@ -187,7 +204,7 @@ export default class Cart extends Component {
 
     return (
       <>
-        <h3>Add a new product</h3>
+        <h3>Add a New Product</h3>
         <Form onSubmit={handleSubmit}>
           <Form.Group as={Row} controlId="name">
             <Form.Label column sm={2}>
@@ -237,10 +254,19 @@ export default class Cart extends Component {
             </Col>
           </Form.Group>
 
+          <Form.Group as={Row} controlId="images">
+            <Form.Label column sm={2}>
+              Images
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="file" accept="image/*" multiple />
+            </Col>
+          </Form.Group>
+
           <Form.Group as={Row}>
             <Col sm={{ span: 10, offset: 2 }}>
-              <Button type="submit" className="beauty-btn">
-                Add
+              <Button type="submit" className="beauty-btn" id="addBtn">
+                Add Product
               </Button>{' '}
               <Button type="reset" className="beauty-btn">
                 Reset
