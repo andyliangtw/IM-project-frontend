@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Button, Table, Form, Row, Col } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 
 import imgurAPI from '../../api/imgurAPI';
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
-import { formatPrice, dCopy } from '../../utils';
+import { isLogin, formatPrice, dCopy } from '../../utils';
 
 import '../style.scss';
 
@@ -374,6 +375,10 @@ export default class Cart extends Component {
   }
 
   render() {
+    if (!isLogin()) {
+      return <Redirect to="/" />;
+    }
+
     const { isAdding } = this.state;
     return (
       <div>

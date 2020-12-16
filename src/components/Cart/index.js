@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Table } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
 import getInfoAPI from '../../api/getInfoAPI';
 import operationAPI from '../../api/operationAPI';
 import transactionAPI from '../../api/transactionAPI';
-import { formatPrice } from '../../utils';
+import { isLogin, formatPrice } from '../../utils';
 
 import '../style.scss';
 
@@ -63,7 +64,7 @@ export default class Cart extends Component {
         window.location.href = '/';
       } catch (err) {
         console.log(err);
-        alert(err?.response?.data?.message);
+        alert(err?.response?.data?.response);
       }
     };
 
@@ -76,6 +77,10 @@ export default class Cart extends Component {
   }
 
   render() {
+    if (!isLogin()) {
+      return <Redirect to="/" />;
+    }
+
     const { products } = this.state;
     let overAllPrice = 0;
     const cart = products.map((product, i) => {

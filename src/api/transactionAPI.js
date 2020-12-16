@@ -13,14 +13,15 @@ transactionAPI.confirmOrder = () => {
   });
 };
 
-transactionAPI.comfirmReceive = () => {
-  const url = `/comfirmReceive`;
+transactionAPI.confirmReceive = (transaction_address) => {
+  const url = `/confirmReceive`;
   return api.fire({
     url,
     headers: {
       'Content-Type': 'application/json',
     },
-    method: 'GET',
+    method: 'POST',
+    data: transaction_address,
   });
 };
 
