@@ -25,14 +25,14 @@ export default class Cart extends Component {
 
   async getSellsInfo() {
     const userId = localStorage.getItem('userId');
-    const res = await getInfoAPI.userInfo({ userId });
-    const sellList = res.data.sell_list;
+    const { data: res } = await getInfoAPI.userInfo({ userId });
+    const sellList = res.sell_list;
 
     const products = await Promise.all(
       Object.keys(sellList).map(async (itemId) => {
-        const res = await getInfoAPI.itemInfo({ itemId });
+        const { data: res } = await getInfoAPI.itemInfo({ itemId });
         return {
-          ...res.data,
+          ...res,
           id: itemId,
           amount: sellList[itemId],
           isEdit: false,
@@ -166,8 +166,8 @@ export default class Cart extends Component {
             maxSizeMB: 10,
             maxWidthOrHeight: 1920,
           });
-          const res = await imgurAPI.uploadImage(compressedFile);
-          return res.data.data.link;
+          const { data: res } = await imgurAPI.uploadImage(compressedFile);
+          return res.data.link;
           // return {url: res.data.data.link, deletehash: res.data.data.deletehash} // Backend not support deletehash now
         }),
       );
@@ -181,9 +181,9 @@ export default class Cart extends Component {
       };
 
       try {
-        const res = await operationAPI.addProduct(newProduct);
+        const { data: res } = await operationAPI.addProduct(newProduct);
         const { products } = this.state;
-        newProduct.id = res.data.productId.$oid;
+        newProduct.id = res.productId?.$oid;
         newProduct.isEdit = false;
         const newProducts = [...products, newProduct];
 
@@ -259,7 +259,7 @@ export default class Cart extends Component {
               Images
             </Form.Label>
             <Col sm={10}>
-              <Form.Control type="file" accept="image/*" multiple />
+              <Form.Control required type="file" accept="image/*" multiple />
             </Col>
           </Form.Group>
 

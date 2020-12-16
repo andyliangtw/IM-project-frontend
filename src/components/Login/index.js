@@ -22,11 +22,10 @@ export default class Login extends Component {
       password: target.password.value,
     };
     try {
-      const res = await userAPI.login(userData);
-      const rd = res.data;
+      const { data: res } = await userAPI.login(userData);
 
-      localStorage.setItem('authToken', rd.api_key.$binary);
-      localStorage.setItem('userId', rd.userId.$oid);
+      localStorage.setItem('authToken', res.api_key.$binary);
+      localStorage.setItem('userId', res.userId.$oid);
       localStorage.setItem('username', userData.username);
 
       window.location.href = '/';

@@ -24,15 +24,14 @@ export default class Product extends Component {
     const urlParams = new URLSearchParams(window.location.search);
     const itemId = urlParams.get('pid');
 
-    const res_item = await getInfoAPI.itemInfo({ itemId });
-    const rd_item = res_item.data;
+    const { data: item_info } = await getInfoAPI.itemInfo({ itemId });
 
-    const oid = rd_item.owner.$oid;
-    const res_user = await getInfoAPI.userInfo({ userId: oid });
-    const owner = res_user.data;
+    const { data: owner } = await getInfoAPI.userInfo({
+      userId: item_info.owner?.$oid,
+    });
 
     const product = {
-      ...res_item.data,
+      ...item_info,
       id: itemId,
       amount: owner.sell_list[itemId],
     };

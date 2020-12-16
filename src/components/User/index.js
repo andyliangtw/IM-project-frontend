@@ -20,14 +20,13 @@ export default class User extends Component {
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('uid');
 
-    const res = await getInfoAPI.userInfo({ userId });
-    const rd = res.data;
+    const { data: rd } = await getInfoAPI.userInfo({ userId });
 
     const sell_list = rd.sell_list;
     const new_sell_list = await Promise.all(
       Object.keys(sell_list).map(async (itemId) => {
-        const res = await getInfoAPI.itemInfo({ itemId });
-        return { ...res.data, id: itemId, amount: sell_list[itemId] };
+        const { data } = await getInfoAPI.itemInfo({ itemId });
+        return { ...data, id: itemId, amount: sell_list[itemId] };
       }),
     );
 

@@ -23,13 +23,13 @@ export default class Cart extends Component {
 
   async getCartInfo() {
     const userId = localStorage.getItem('userId');
-    const res = await getInfoAPI.userInfo({ userId });
-    const cartList = res.data.cart_list;
+    const { data: res } = await getInfoAPI.userInfo({ userId });
+    const cartList = res.cart_list;
 
     const products = await Promise.all(
       Object.keys(cartList).map(async (itemId) => {
-        const res = await getInfoAPI.itemInfo({ itemId });
-        return { ...res.data, id: itemId, amount: cartList[itemId] };
+        const { data: res } = await getInfoAPI.itemInfo({ itemId });
+        return { ...res, id: itemId, amount: cartList[itemId] };
       }),
     );
     this.setState({ products });
@@ -58,8 +58,8 @@ export default class Cart extends Component {
     const handleCheckoutBtnClick = async () => {
       this.setState({ haveClickedCheckout: true });
       try {
-        const res = await transactionAPI.confirmOrder();
-        alert(res.data?.response);
+        const { data: res } = await transactionAPI.confirmOrder();
+        alert(res?.response);
         window.location.href = '/';
       } catch (err) {
         console.log(err);

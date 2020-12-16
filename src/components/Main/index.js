@@ -27,30 +27,32 @@ export default class Main extends Component {
   }
 
   async getSellersInfo() {
-    const res = await getInfoAPI.allCollector({
+    const { data: res } = await getInfoAPI.allCollector({
       length: SELLER_DISPLAY_AMOUNT,
     });
-    const rd = res.data.collectors;
+    const collectors = res.collectors;
 
     const sellers = await Promise.all(
-      rd.map(async (seller) => {
+      collectors.map(async (seller) => {
         const userId = seller.$oid;
-        const res = await getInfoAPI.userInfo({ userId });
-        return { ...res.data, id: userId };
+        const { data: res } = await getInfoAPI.userInfo({ userId });
+        return { ...res, id: userId };
       }),
     );
     this.setState({ sellers });
   }
 
   async getProductsInfo() {
-    const res = await getInfoAPI.allProduct({ length: PRODUCT_DISPLAY_AMOUNT });
-    const rd = res.data.products;
+    const { data: res } = await getInfoAPI.allProduct({
+      length: PRODUCT_DISPLAY_AMOUNT,
+    });
+    const rd = res.products;
 
     const products = await Promise.all(
       rd.map(async (product) => {
         const itemId = product.itemId;
-        const res = await getInfoAPI.itemInfo({ itemId });
-        return { ...res.data, id: itemId, amount: product.amounts };
+        const { data: res } = await getInfoAPI.itemInfo({ itemId });
+        return { ...res, id: itemId, amount: product.amounts };
       }),
     );
 
