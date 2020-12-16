@@ -255,7 +255,7 @@ export default class Account extends Component {
             {data.wallet_address}
           </a>
         </p>
-        <p>Balance: {formatPrice(data.balance)}</p>
+        <p>Balance: {formatPrice(data.balance, 5)}</p>
         {this.renderShopRecord()}
         <br />
         {this.renderSoldProducts()}
