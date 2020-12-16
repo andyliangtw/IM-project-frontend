@@ -17,6 +17,7 @@ export default class Cart extends Component {
       products: [],
       products_prev: [],
       isAdding: false,
+      isImgChecked: {},
     };
   }
 
@@ -46,11 +47,25 @@ export default class Cart extends Component {
     });
   }
 
+  async getImgUrlsByImgFiles(imageFiles) {
+    return await Promise.all(
+      Array.from(imageFiles).map(async (imageFile) => {
+        const compressedFile = await imageCompression(imageFile, {
+          maxSizeMB: 10,
+          maxWidthOrHeight: 1920,
+        });
+        const { data: res } = await imgurAPI.uploadImage(compressedFile);
+        return res.data.link;
+        // return {url: res.data.data.link, deletehash: res.data.data.deletehash} // Backend not support deletehash now
+      }),
+    );
+  }
+
   renderOperationBtns(i) {
     const { products } = this.state;
     return products[i].isEdit ? (
       <>
-        {this.renderDoneBtn(i)} {this.renderCancelBtn(i)}
+        {this.renderDoneBtn(i)} {this.renderCancelBtn()}
       </>
     ) : (
       <>
@@ -63,7 +78,6 @@ export default class Cart extends Component {
     const { products } = this.state;
     const handleEditBtnClick = (i) => {
       products[i].isEdit = true;
-
       this.setState({ products });
     };
 
@@ -95,17 +109,30 @@ export default class Cart extends Component {
   renderDoneBtn(i) {
     const { products } = this.state;
     const handleDoneBtnClick = async (i) => {
+      const imageFiles = document.getElementById(`p${i}_img_input`).files;
+      const imageFiltered = products[i].image_urls.filter((url, j) => {
+        const id = `p${i}_img${j}`;
+        return document.getElementById(id).checked;
+      });
+      products[i].image_urls = imageFiltered.concat(
+        await this.getImgUrlsByImgFiles(imageFiles),
+      );
+
       const newProduct = {
         item_id: products[i].id,
         name: products[i].name,
         description: products[i].description,
         price: products[i].price,
         amount: products[i].amount,
+        image_urls: products[i].image_urls,
       };
+
       await operationAPI.reviseProduct(newProduct);
 
       products[i].isEdit = false;
       this.setState({
+        isImgChecked: {},
+        products,
         products_prev: dCopy(products),
       });
     };
@@ -121,21 +148,15 @@ export default class Cart extends Component {
     );
   }
 
-  renderCancelBtn(i) {
-    const { products, products_prev } = this.state;
-
-    const handleCancelBtnClick = (i) => {
-      products[i].isEdit = false;
-      this.setState({
-        products: dCopy(products_prev),
-      });
-    };
-
+  renderCancelBtn() {
+    const { products_prev } = this.state;
     return (
       <Button
         className="beauty-btn"
         onClick={() => {
-          handleCancelBtnClick(i);
+          this.setState({
+            products: dCopy(products_prev),
+          });
         }}>
         Cancel
       </Button>
@@ -143,12 +164,12 @@ export default class Cart extends Component {
   }
 
   renderAddProductBtn() {
-    const handleAddProductBtnClick = () => {
-      this.setState({ isAdding: true });
-    };
-
     return (
-      <Button className="beauty-btn" onClick={handleAddProductBtnClick}>
+      <Button
+        className="beauty-btn"
+        onClick={() => {
+          this.setState({ isAdding: true });
+        }}>
         Add New One
       </Button>
     );
@@ -161,17 +182,7 @@ export default class Cart extends Component {
 
       const form = e.target;
       form.addBtn.innerHTML = 'Please wait...';
-      const image_urls = await Promise.all(
-        Array.from(form.images.files).map(async (imageFile) => {
-          const compressedFile = await imageCompression(imageFile, {
-            maxSizeMB: 10,
-            maxWidthOrHeight: 1920,
-          });
-          const { data: res } = await imgurAPI.uploadImage(compressedFile);
-          return res.data.link;
-          // return {url: res.data.data.link, deletehash: res.data.data.deletehash} // Backend not support deletehash now
-        }),
-      );
+      const image_urls = await this.getImgUrlsByImgFiles(form.images.files);
 
       const newProduct = {
         name: form.name.value,
@@ -283,7 +294,7 @@ export default class Cart extends Component {
   }
 
   renderTable() {
-    const { products } = this.state;
+    const { products, isImgChecked } = this.state;
     const handleChange = (i, type, e) => {
       products[i][type] =
         type === 'price' || type === 'amount'
@@ -331,11 +342,36 @@ export default class Cart extends Component {
                 />
               </td>
               <td>
+                {product.image_urls?.map((url, j) => {
+                  const id = `p${i}_img${j}`;
+
+                  return (
+                    <>
+                      <input
+                        type="checkbox"
+                        id={id}
+                        checked={!isImgChecked[id]}
+                        onClick={() => {
+                          isImgChecked[id] = !isImgChecked[id];
+                          this.setState({ isImgChecked });
+                        }}
+                      />
+                      <a
+                        key={i}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        {' ' + url.slice(0, 30)}...
+                      </a>
+                      <br />
+                    </>
+                  );
+                })}
                 <input
+                  id={`p${i}_img_input`}
                   type="file"
                   accept="image/*"
                   multiple
-                  // onChange={handleImageUpload.bind(this, i, 'image')}
                 />
               </td>
             </>
