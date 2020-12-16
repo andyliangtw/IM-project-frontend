@@ -26,10 +26,7 @@ export default class Login extends Component {
       const rd = res.data;
 
       localStorage.setItem('authToken', rd.api_key.$binary);
-      localStorage.setItem('session_id', rd.session_id);
       localStorage.setItem('userId', rd.userId.$oid);
-      localStorage.setItem('authType', rd.api_key.$type);
-      localStorage.setItem('_id', rd._id.$oid);
       localStorage.setItem('username', userData.username);
 
       window.location.href = '/';

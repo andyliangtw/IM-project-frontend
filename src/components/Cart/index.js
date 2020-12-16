@@ -27,7 +27,7 @@ export default class Cart extends Component {
     const cartList = res.data.cart_list;
 
     const products = await Promise.all(
-      Object.keys(cartList).map(async (itemId, i) => {
+      Object.keys(cartList).map(async (itemId) => {
         const res = await getInfoAPI.itemInfo({ itemId });
         return { ...res.data, id: itemId, amount: cartList[itemId] };
       }),

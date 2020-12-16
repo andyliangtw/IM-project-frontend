@@ -13,10 +13,7 @@ export default class Logout extends Component {
     await userAPI.logout();
 
     localStorage.removeItem('authToken');
-    localStorage.removeItem('session_id');
     localStorage.removeItem('userId');
-    localStorage.removeItem('authType');
-    localStorage.removeItem('_id');
     localStorage.removeItem('username');
 
     window.location.href = '/';
