@@ -3,7 +3,7 @@ import { Breadcrumb, Image, Carousel, Row, Col } from 'react-bootstrap';
 
 import AddCartBtn from '../AddCartBtn';
 import getInfoAPI from '../../api/getInfoAPI';
-import { formatPrice } from '../../utils';
+import { isLogin, formatPrice } from '../../utils';
 
 export default class Product extends Component {
   constructor(props) {
@@ -70,7 +70,9 @@ export default class Product extends Component {
             <p>
               Remain:{' '}
               <span
-                className={product.amount < 15 ? 'text-danger' : 'text-info'}>
+                className={
+                  product.amount < 15 ? 'text-danger' : 'text-success'
+                }>
                 {product.amount}
               </span>
             </p>
@@ -86,7 +88,15 @@ export default class Product extends Component {
                 required
               />
             </p>
-            <AddCartBtn item_id={product.id} amount={buyAmount} />
+            {isLogin() ? (
+              localStorage.getItem('userId') === product.owner?.$oid ? (
+                <p>This is Your Product</p>
+              ) : (
+                <AddCartBtn item_id={product.id} amount={buyAmount} />
+              )
+            ) : (
+              <p>Please login to buy</p>
+            )}
           </Col>
         </Row>
       </>

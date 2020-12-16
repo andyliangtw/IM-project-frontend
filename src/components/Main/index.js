@@ -3,7 +3,7 @@ import { Carousel, CardDeck, Card, Image } from 'react-bootstrap';
 
 import AddCartBtn from '../AddCartBtn';
 import getInfoAPI from '../../api/getInfoAPI';
-import { formatPrice } from '../../utils';
+import { isLogin, formatPrice } from '../../utils';
 
 import { SELLER_DISPLAY_AMOUNT, PRODUCT_DISPLAY_AMOUNT } from './constant';
 import banner1 from '../../img/banner1.png';
@@ -116,7 +116,15 @@ export default class Main extends Component {
             <Card.Text>
               Remain: <b>{product.amount}</b>
             </Card.Text>
-            <AddCartBtn item_id={product.id} />
+            {isLogin() ? (
+              localStorage.getItem('userId') === product.owner?.$oid ? (
+                <p>This is Your Product</p>
+              ) : (
+                <AddCartBtn item_id={product.id} />
+              )
+            ) : (
+              <p>Please login to buy</p>
+            )}
           </Card.Body>
         </Card>
       );
